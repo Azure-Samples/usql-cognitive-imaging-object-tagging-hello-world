@@ -1,57 +1,121 @@
-# Project Name
+# USQL/Cognitive Hello World
 
-(short, 1-3 sentenced, description of the project)
+## Imaging  scenarios
+### Image Tagging
 
-## Features
+```
+REFERENCE ASSEMBLY ImageCommon;
+REFERENCE ASSEMBLY FaceSdk;
+REFERENCE ASSEMBLY ImageEmotion;
+REFERENCE ASSEMBLY ImageTagging;
+REFERENCE ASSEMBLY ImageOcr;
 
-This project framework provides the following features:
+@imgs =
+    EXTRACT FileName string, ImgData byte[]
+    FROM @"/images/{FileName:*}.jpg"
+    USING new Cognition.Vision.ImageExtractor();
 
-* Feature 1
-* Feature 2
-* ...
+// Extract the number of objects on each image and tag them 
+@objects =
+    PROCESS @imgs 
+    PRODUCE FileName,
+            NumObjects int,
+            Tags string
+    READONLY FileName
+    USING new Cognition.Vision.ImageTagger();
+```
 
-## Getting Started
+### Extract emotions from human faces
 
-### Prerequisites
+```
+@emotions =
+    PROCESS @imgs
+    PRODUCE FileName string,
+            NumFaces int,
+            Emotion string
+    READONLY FileName
+    USING new Cognition.Vision.EmotionAnalyzer();
+```
 
-(ideally very short, if any)
-
-- OS
-- Library version
-- ...
-
-### Installation
-
-(ideally very short)
-
-- npm install [package name]
-- mvn install
-- ...
-
-### Quickstart
-(Add steps to get up and running quickly)
-
-1. git clone [repository clone url]
-2. cd [respository name]
-3. ...
+### Estimate age and gender for human faces
 
 
-## Demo
+```
+@ocrs =
+        PROCESS @imgs
+        PRODUCE FileName,
+                Text string
+        READONLY FileName
+        USING new Cognition.Vision.OcrExtractor();
+```
 
-A demo app is included to show how to use the project.
+## Text scenarios
 
-To run the demo, follow these steps:
 
-(Add steps to start up the demo)
+### Input data
 
-1.
-2.
-3.
+```
+REFERENCE ASSEMBLY [TextCommon];
+REFERENCE ASSEMBLY [TextSentiment];
+REFERENCE ASSEMBLY [TextKeyPhrase];
 
-## Resources
+@WarAndPeace =
+    EXTRACT No int,
+            Year string,
+            Book string,
+            Chapter string,
+            Text string
+    FROM @"/usqlext/samples/cognition/war_and_peace.csv"
+    USING Extractors.Csv();
+```
 
-(Any additional resources or related projects)
+### Extract key phrases for each paragraph
 
-- Link to supporting information
-- Link to similar sample
-- ...
+```
+@keyphrase =
+    PROCESS @WarAndPeace
+    PRODUCE No,
+            Year,
+            Book,
+            Chapter,
+            Text,
+            KeyPhrase string
+    READONLY No,
+            Year,
+            Book,
+            Chapter,
+            Text
+    USING new Cognition.Text.KeyPhraseExtractor();
+
+// Tokenize the key phrases.
+@kpsplits =
+    SELECT No,
+        Year,
+        Book,
+        Chapter,
+        Text,
+        T.KeyPhrase
+    FROM @keyphrase
+        CROSS APPLY
+            new Cognition.Text.Splitter("KeyPhrase") AS T(KeyPhrase);
+```
+
+
+### Perform sentiment analysis on each paragraph
+
+```@sentiment =
+    PROCESS @WarAndPeace
+    PRODUCE No,
+            Year,
+            Book,
+            Chapter,
+            Text,
+            Sentiment string,
+            Conf double
+    READONLY No,
+            Year,
+            Book,
+            Chapter,
+            Text
+    USING new Cognition.Text.SentimentAnalyzer(true);
+```
