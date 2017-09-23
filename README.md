@@ -103,7 +103,8 @@ REFERENCE ASSEMBLY [TextKeyPhrase];
 
 ### Perform sentiment analysis on each paragraph
 
-```@sentiment =
+```
+@sentiment =
     PROCESS @WarAndPeace
     PRODUCE No,
             Year,
