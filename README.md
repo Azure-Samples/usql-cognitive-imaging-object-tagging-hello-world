@@ -1,3 +1,9 @@
+---
+services: data-lake-analytics
+platforms: dotnet
+author: saveenr
+---
+
 # USQL/Cognitive Hello World
 
 ## Imaging  scenarios
