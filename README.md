@@ -85,14 +85,3 @@ OUTPUT @tags_serialized
     USING new Cognition.Vision.FaceDetectionExtractor();
 ```
 
-## Detect Text in Images
-
-```
-@ocrs =
-    PROCESS @imgs
-    PRODUCE FileName,
-            Text string
-    READONLY FileName
-    USING new Cognition.Vision.OcrExtractor();
-```
-
