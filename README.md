@@ -4,7 +4,7 @@ platforms: dotnet
 author: saveenr
 ---
 
-# USQL/Cognitive Imaging Hello World
+# USQL/Cognitive Imaging Object Tagging Hello World
 
 ## Load the assemblies
 
@@ -14,22 +14,18 @@ REFERENCE ASSEMBLY FaceSdk;
 REFERENCE ASSEMBLY ImageEmotion;
 REFERENCE ASSEMBLY ImageTagging;
 REFERENCE ASSEMBLY ImageOcr;
-```
 
-## Get the image data
+// Get the image data
 
-```
 @imgs =
     EXTRACT 
         FileName string, 
         ImgData byte[]
     FROM @"/usqlext/samples/cognition/{FileName}.jpg"
     USING new Cognition.Vision.ImageExtractor();
-```
 
-## Extract the number of objects on each image and tag them 
+//  Extract the number of objects on each image and tag them 
 
-```
 @tags =
     PROCESS @imgs 
     PRODUCE FileName,
@@ -37,12 +33,7 @@ REFERENCE ASSEMBLY ImageOcr;
             Tags SQL.MAP<string, float?>
     READONLY FileName
     USING new Cognition.Vision.ImageTagger();
-   
-```
 
-## Write out the tagging information
-
-```
 @tags_serialized =
     SELECT FileName,
            NumObjects,
@@ -52,22 +43,5 @@ REFERENCE ASSEMBLY ImageOcr;
 OUTPUT @tags_serialized
     TO "/tags.csv"
     USING Outputers.Csv();
-```
-
-## Extract Emotion from human faces
-
-```
-@emotions_from_extractor =
-    EXTRACT FileName string, 
-        NumFaces int, 
-        FaceIndex int, 
-        RectX float, 
-        RectY float, 
-        Width float, 
-        Height float, 
-        Emotion string, 
-        Confidence float
-    FROM @"/usqlext/samples/cognition/{FileName}.jpg"
-    USING new Cognition.Vision.EmotionExtractor();
 ```
 
