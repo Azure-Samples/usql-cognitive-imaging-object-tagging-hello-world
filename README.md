@@ -71,17 +71,3 @@ OUTPUT @tags_serialized
     USING new Cognition.Vision.EmotionExtractor();
 ```
 
-### Estimate age and gender for human faces
-
-```
-@faces_from_extractor =
-    EXTRACT FileName string, 
-        NumFaces int, 
-        FaceIndex int, 
-        RectX float, RectY float, Width float, Height float, 
-        FaceAge int, 
-        FaceGender string
-    FROM @"/usqlext/samples/cognition/{FileName}.jpg"
-    USING new Cognition.Vision.FaceDetectionExtractor();
-```
-
