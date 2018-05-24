@@ -4,7 +4,7 @@ platforms: dotnet
 author: saveenr
 ---
 
-# U-SQL/Cognitive Imaging Object Tagging Hello World
+# U-SQL: Cognitive Imaging Object Tagging Hello World
 
 ## Load the assemblies
 
