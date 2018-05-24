@@ -1,8 +1,8 @@
-----
+---
 services: data-lake-analytics
 platforms: dotnet
 author: saveenr
-----
+---
 
 # U-SQL/Cognitive Imaging Object Tagging Hello World
 
